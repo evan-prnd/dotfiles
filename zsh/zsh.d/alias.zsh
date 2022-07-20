@@ -138,6 +138,8 @@ alias gds='gd --staged --no-prefix'
 alias gs='git status'
 alias gsu='gs -u'
 alias gu='git pull --autostash'
+alias gp='git push'
+alias gpc='git push --set-upstream origin "$(git-branch-current 2> /dev/null)"'
 
 function ghad() {
   # Run gha (git history) and refresh if anything in .git/ changes
