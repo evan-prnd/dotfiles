@@ -142,6 +142,11 @@ fi
 # }}} ===================
 
 # fzf
+# Prefer the user-managed fzf install because ~/.fzf.zsh uses `fzf --zsh`,
+# which isn't supported by older Homebrew fzf releases.
+if [[ -d "$HOME/.fzf/bin" ]]; then
+  path=( "$HOME/.fzf/bin" ${path:#$HOME/.fzf/bin} )
+fi
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Source after-{zplug,zgen} zsh script files.
