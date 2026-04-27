@@ -55,8 +55,8 @@ unsetopt AUTO_NAME_DIRS       # Do not auto add variable-stored paths
 unsetopt NOMATCH
 
 # Editor
-if (( $+commands[nvim] )) && [[ -z "$GIT_EDITOR" ]] ; then
-  export GIT_EDITOR="nvim"
+if [[ -z "$GIT_EDITOR" ]] ; then
+  export GIT_EDITOR="vim"
 fi
 
 #

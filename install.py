@@ -15,6 +15,7 @@ print(__doc__)  # print logo.
 
 
 import argparse
+import os
 parser = argparse.ArgumentParser()
 parser.add_argument('-f', '--force', action="store_true", default=False,
                     help='If set, it will override existing symbolic links')
@@ -22,8 +23,11 @@ parser.add_argument('--skip-vimplug', action='store_true',
                     help='If set, do not update vim plugins.')
 parser.add_argument('--skip-zgen', '--skip-zplug', action='store_true',
                     help='If set, skip zgen updates.')
+parser.add_argument('--enable-neovim', action='store_true',
+                    help='If set, also install and configure neovim.')
 
 args = parser.parse_args()
+ENABLE_NEOVIM = args.enable_neovim or os.getenv('DOTFILES_ENABLE_NEOVIM') == '1'
 
 ################# BEGIN OF FIXME #################
 
@@ -38,9 +42,6 @@ tasks = {
     '~/.vimrc' : 'vim/vimrc',
     '~/.vim' : 'vim',
     '~/.vim/autoload/plug.vim' : 'vim/bundle/vim-plug/plug.vim',
-
-    # NeoVIM
-    '~/.config/nvim' : 'nvim',
 
     # GIT
     '~/.gitconfig' : 'git/gitconfig',
@@ -88,6 +89,9 @@ tasks = {
     '~/.config/pycodestyle' : 'python/pycodestyle',
     '~/.ptpython/config.py' : 'python/ptpython.config.py',
 }
+
+if ENABLE_NEOVIM:
+    tasks['~/.config/nvim'] = 'nvim'
 
 
 try:
@@ -213,16 +217,17 @@ EOL
     echo -en '\033[0m';
 ''']
 
-post_actions += [  # neovim
-    '''#!/bin/bash
-    # validate neovim package installation on python2/3 and automatically install if missing
-    bash "etc/install-neovim-py.sh"
-''']
+if ENABLE_NEOVIM:
+    post_actions += [  # neovim
+        '''#!/bin/bash
+        # validate neovim package installation on python2/3 and automatically install if missing
+        bash "etc/install-neovim-py.sh"
+    ''']
 
 vim_options = dict(
     nvim=dict(vim='nvim', flag='--headless'),
     vim=dict(vim='vim', flag=''),
-)[find_executable('nvim') and 'nvim' or 'vim']
+)[ENABLE_NEOVIM and find_executable('nvim') and 'nvim' or 'vim']
 post_actions += [  # vim-plug
     # Run vim-plug installation
     {'install' : '{vim} {flag} +"set nonumber" +"PlugInstall --sync" +%print +qall'.format(**vim_options),
