@@ -93,6 +93,23 @@ tasks = {
 if ENABLE_NEOVIM:
     tasks['~/.config/nvim'] = 'nvim'
 
+# Codex / Claude AI assistant skills (per-skill symlinks)
+# Each subdir under codex/skills/ and claude/skills/ is symlinked to
+# ~/.codex/skills/<name> and ~/.claude/skills/<name> respectively, so
+# Codex- or Claude-managed entries (e.g. ~/.codex/skills/.system/) stay intact.
+_repo_dir = os.path.abspath(os.path.dirname(__file__))
+for _assistant in ('codex', 'claude'):
+    _skills_src = os.path.join(_repo_dir, _assistant, 'skills')
+    if not os.path.isdir(_skills_src):
+        continue
+    for _name in sorted(os.listdir(_skills_src)):
+        if _name.startswith('.'):
+            continue
+        if not os.path.isdir(os.path.join(_skills_src, _name)):
+            continue
+        tasks['~/.{a}/skills/{n}'.format(a=_assistant, n=_name)] = \
+            '{a}/skills/{n}'.format(a=_assistant, n=_name)
+
 
 try:
     from distutils.spawn import find_executable

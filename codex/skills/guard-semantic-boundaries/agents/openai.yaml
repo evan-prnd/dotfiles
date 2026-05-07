@@ -1,0 +1,4 @@
+interface:
+  display_name: "Guard Semantic Boundaries"
+  short_description: "Audit data stages before refactors"
+  default_prompt: "Use $guard-semantic-boundaries to review this change for raw/transformed stage mismatches before I patch it."
